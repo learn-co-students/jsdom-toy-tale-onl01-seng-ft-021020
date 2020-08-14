@@ -1,9 +1,11 @@
-const addBtn = document.querySelector('#new-toy-btn')
-const toyForm = document.querySelector('.container')
 
 let addToy = false;
 
 document.addEventListener("DOMContentLoaded", () => {
+  
+  const addBtn = document.querySelector('#new-toy-btn')
+  const toyFormContainer = document.querySelector('.container')
+
 
   addBtn.addEventListener("click", () => {
     // hide & seek with the form
@@ -14,9 +16,13 @@ document.addEventListener("DOMContentLoaded", () => {
       toyFormContainer.style.display = "none";
     }
   });
-});
 
-document.addEventListener('DOMContentLoad', fetchToys());
+  fetchToys();
+
+  form = document.querySelector('.add-toy-form')
+  form.addEventListener('submit', submitData)
+
+});
 
 // GET fetch all toy objects.
 function fetchToys() {
@@ -31,6 +37,7 @@ function createCard(json) {
   for (const toy of json) {
     let newDiv = document.createElement('div') // create div
     newDiv.className = "card" // with class = "card"
+    newDiv.id = toy.id
     createName(toy, newDiv)
     createPhoto(toy, newDiv)
     totalLikes(toy, newDiv)
@@ -57,7 +64,7 @@ function createPhoto(toy, card) {
 // p tag with total likes
 function totalLikes(toy, card) {
   let likes = document.createElement('p')
-  likes.innerText = `${toy.likes} likes`
+  likes.innerHTML = `<span>${toy.likes} </span> likes`
   card.appendChild(likes)
 }
 
@@ -66,7 +73,6 @@ function addButton(toy, card) {
   let newButton = document.createElement('button')
   newButton.addEventListener('click', function() {
     increaseCount(toy);
-    window.location.reload(true);
   })
   newButton.className = "like-btn"
   newButton.style = "width: 30px;height:30px;cursor:pointer;"
@@ -76,8 +82,6 @@ function addButton(toy, card) {
 
 // POST fetch() request sent to http://localhost:3000/toys
 
-form = document.querySelector('.add-toy-form')
-form.addEventListener('submit', submitData)
 
 function submitData() {
 
@@ -102,7 +106,10 @@ function submitData() {
 }
 
 function increaseCount(toy) {
-
+  let span = document.getElementById(`${toy.id}`).querySelector("span")
+  let previewsLikes = parseInt(span.innerText, 10)
+  previewsLikes += 1
+  span.innerText = previewsLikes.toString()
 
   let configObj = {
         method: "PATCH",
